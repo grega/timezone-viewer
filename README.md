@@ -6,9 +6,11 @@ A simple single-page HTML tool to view upcoming times across multiple timezones 
 
 The page displays hourly times for today and the next 14 days, with working hours (08:00-18:00) highlighted for each timezone.
 
-## Customizing timezones
+## Customising timezones
 
-Add `?tz=` to the URL with comma-separated timezone names.
+Add `?tz=` to the URL with comma-separated timezone names or UTC offsets.
+
+**UTC offsets:** Use numeric offsets like `0`, `+4`, `-5`, `-8` to display fixed UTC offsets (e.g., UTC+4, UTC-5).
 
 **Custom labels:** Add `:CustomName` after any timezone to override the default location name.
 
@@ -17,6 +19,8 @@ Add `?tz=` to the URL with comma-separated timezone names.
 - `?tz=Europe/London,America/New_York,America/Los_Angeles`
 - `?tz=Europe/London,America/Chicago,America/Los_Angeles:San Francisco`
 - `?tz=Europe/London:UK,America/New_York:NYC,America/Los_Angeles:SF`
+- `?tz=0,+4,-5,-8` (displays as UTC+0, UTC+4, UTC-5, UTC-8)
+- `?tz=Europe/London,+4:Dubai,-8:Pacific` (mix named timezones and offsets)
 
 ### Common timezones
 
