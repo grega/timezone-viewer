@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .day-section {
+            margin-bottom: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .day-section summary {
+            padding: 0.75rem 1rem;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #212529;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-section summary:hover {
+            background: #e9ecef;
+        }
+
+        .day-section[open] summary {
+            background: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .day-section summary::marker,
+        .day-section summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .day-section summary::after {
+            content: '▼';
+            font-size: 0.7rem;
+            color: #6c757d;
+            transition: transform 0.2s;
+        }
+
+        .day-section[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .day-section.today summary {
+            background: #e7f3ff;
+            color: #004085;
+        }
+
+        .day-section.today[open] summary {
+            background: #d0e7ff;
+        }
+
+        .day-section.today summary:hover {
+            background: #d0e7ff;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .info-section summary {
+            padding: 0.6rem 1rem;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #495057;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-section summary:hover {
+            background: #e9ecef;
+        }
+
+        .info-section[open] summary {
+            background: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .info-section summary::marker,
+        .info-section summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .info-section summary::after {
+            content: '▼';
+            font-size: 0.65rem;
+            color: #6c757d;
+            transition: transform 0.2s;
+        }
+
+        .info-section[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #212529;
+        }
+
+        .info-box code {
+            background: #e9ecef;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #d63384;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+        }
+
+        .info-box p:first-child {
+            margin-top: 0;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box ul {
+            margin: 0.5rem 0 0 1.5rem;
+        }
+
+        .info-box ul.two-columns {
+            columns: 2;
+            column-gap: 1rem;
+        }
+
+        .day-section table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .day-section thead {
+            background: #f8f9fa;
+        }
+
+        .day-section th {
+            padding: 0.5rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            color: #495057;
+        }
+
+        .day-section th:first-child {
+            width: 100px;
+        }
+
+        .day-section td {
+            padding: 0.4rem 0.5rem;
+            border-bottom: 1px solid #f1f3f5;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 0.8rem;
+        }
+
+        .day-section td:first-child {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.75rem;
+        }
+
+        .day-section tr:hover {
+            background: #f8f9fa;
+        }
+
+        .day-section td.working-hours {
+            background: #e5f8ec;
+        }
+
+        .day-section tr:hover td.working-hours {
+            background: #ccf6dc;
+        }
+
+        .time-display {
+            display: block;
+        }
+
+        .tz-abbr {
+            color: #6c757d;
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .container {
+                padding: 1rem;
+                border-radius: 0;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            .info-section summary,
+            .day-section summary {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.875rem;
+            }
+
+            .day-section table {
+                font-size: 0.7rem;
+            }
+
+            .day-section th,
+            .day-section td {
+                padding: 0.3rem 0.2rem;
+            }
+
+            .day-section th:first-child {
+                width: 80px;
+            }
+
+            .tz-abbr {
+                display: block;
+                margin-left: 0;
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Timezone viewer</h1>
+        <div class="subtitle">Hourly times across timezones for the next 14 days</div>
+
+        <details class="info-section">
+            <summary>How to customize timezones</summary>
+            <div class="info-box">
+                <p><strong>Customize timezones:</strong> Add <code>?tz=</code> to the URL with comma-separated timezone
+                    names.</p>
+                <p><strong>Custom labels:</strong> Add <code>:CustomName</code> after any timezone to override the
+                    default location name.</p>
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><code>?tz=Europe/London,America/New_York,America/Los_Angeles</code></li>
+                    <li><code>?tz=Europe/London,America/Chicago,America/Los_Angeles:San Francisco</code></li>
+                    <li><code>?tz=Europe/London:UK,America/New_York:NYC,America/Los_Angeles:SF</code></li>
+                </ul>
+                <p><strong>Common timezones:</strong></p>
+                <ul class="two-columns">
+                    <li>Pacific/Auckland (NZDT, UTC+13)</li>
+                    <li>Australia/Sydney (AEDT, UTC+11)</li>
+                    <li>Asia/Tokyo (JST, UTC+9)</li>
+                    <li>Asia/Hong_Kong (HKT, UTC+8)</li>
+                    <li>Asia/Singapore (SGT, UTC+8)</li>
+                    <li>Asia/Dubai (GST, UTC+4)</li>
+                    <li>Europe/Paris (CET, UTC+1)</li>
+                    <li>Europe/London (GMT, UTC+0)</li>
+                    <li>America/New_York (EST, UTC-5)</li>
+                    <li>America/Chicago (CST, UTC-6)</li>
+                    <li>America/Denver (MST, UTC-7)</li>
+                    <li>America/Phoenix (MST, UTC-7)</li>
+                    <li>America/Los_Angeles (PST, UTC-8)</li>
+                    <li>America/Anchorage (AKST, UTC-9)</li>
+                </ul>
+            </div>
+        </details>
+
+        <div id="days-container"></div>
+    </div>
+
+    <script>
+        // returns array of objects: { timezone, customLabel }
+        function getTimezones() {
+            const params = new URLSearchParams(window.location.search);
+            const tzParam = params.get('tz');
+
+            if (tzParam) {
+                return tzParam.split(',').map(tz => {
+                    const trimmed = tz.trim();
+                    // check if custom label is provided (eg. "America/Los_Angeles:San Francisco")
+                    if (trimmed.includes(':')) {
+                        const [timezone, customLabel] = trimmed.split(':');
+                        return { timezone: timezone.trim(), customLabel: customLabel.trim() };
+                    }
+                    return { timezone: trimmed, customLabel: null };
+                });
+            }
+
+            return [
+                { timezone: 'Europe/London', customLabel: null },
+                { timezone: 'America/Chicago', customLabel: null },
+                { timezone: 'America/Los_Angeles', customLabel: null }
+            ];
+        }
+
+        function getTimezoneAbbr(date, timezone) {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: timezone,
+                timeZoneName: 'short'
+            });
+
+            const parts = formatter.formatToParts(date);
+            const tzPart = parts.find(part => part.type === 'timeZoneName');
+            return tzPart ? tzPart.value : '';
+        }
+
+        function formatTime(date, timezone) {
+            const timeFormatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: timezone,
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+
+            const time = timeFormatter.format(date);
+            const abbr = getTimezoneAbbr(date, timezone);
+
+            return { time, abbr };
+        }
+
+        function getHourInTimezone(date, timezone) {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: timezone,
+                hour: 'numeric',
+                hour12: false
+            });
+            return parseInt(formatter.format(date));
+        }
+
+        function isWorkingHours(date, timezone) {
+            const hour = getHourInTimezone(date, timezone);
+            return hour >= 8 && hour < 19;
+        }
+
+        // extract location from timezone (e.g., "America/New_York" -> "New York")
+        function getFriendlyLocation(timezone) {
+            const parts = timezone.split('/');
+            if (parts.length > 1) {
+                return parts[parts.length - 1].replace(/_/g, ' ');
+            }
+            return timezone;
+        }
+
+        function formatDate(date) {
+            const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
+            const day = date.getDate();
+            const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
+            return `${weekday}, ${day} ${month}`;
+        }
+
+        function isToday(date) {
+            const today = new Date();
+            return date.getDate() === today.getDate() &&
+                date.getMonth() === today.getMonth() &&
+                date.getFullYear() === today.getFullYear();
+        }
+
+        function renderTable() {
+            const timezones = getTimezones();
+            const container = document.getElementById('days-container');
+            container.innerHTML = '';
+            const now = new Date();
+
+            for (let dayOffset = 0; dayOffset < 15; dayOffset++) {
+                const dayDate = new Date(now);
+                dayDate.setDate(dayDate.getDate() + dayOffset);
+                dayDate.setHours(0, 0, 0, 0);
+
+                const details = document.createElement('details');
+                details.classList.add('day-section');
+
+                if (isToday(dayDate)) {
+                    details.classList.add('today');
+                    details.open = true;
+                }
+
+                if (dayOffset === 1) {
+                    details.open = true;
+                }
+
+                const summary = document.createElement('summary');
+                summary.textContent = formatDate(dayDate);
+                details.appendChild(summary);
+
+                const tableWrapper = document.createElement('div');
+                tableWrapper.classList.add('table-wrapper');
+
+                const table = document.createElement('table');
+
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                const timeHeader = document.createElement('th');
+                timeHeader.textContent = 'Time (local)';
+                headerRow.appendChild(timeHeader);
+
+                timezones.forEach(tzObj => {
+                    const th = document.createElement('th');
+                    const sampleDate = new Date();
+                    const abbr = getTimezoneAbbr(sampleDate, tzObj.timezone);
+                    const location = tzObj.customLabel || getFriendlyLocation(tzObj.timezone);
+                    th.textContent = `${abbr} (${location})`;
+                    headerRow.appendChild(th);
+                });
+
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+
+                // start at current hour for today, 0 for other days
+                const startHour = (dayOffset === 0) ? now.getHours() : 0;
+
+                for (let hour = startHour; hour < 24; hour++) {
+                    const hourDate = new Date(dayDate);
+                    hourDate.setHours(hour);
+
+                    const row = document.createElement('tr');
+
+                    const hourCell = document.createElement('td');
+                    hourCell.textContent = String(hour).padStart(2, '0') + ':00';
+                    row.appendChild(hourCell);
+
+                    timezones.forEach(tzObj => {
+                        const td = document.createElement('td');
+                        const { time, abbr } = formatTime(hourDate, tzObj.timezone);
+                        td.innerHTML = `<span class="time-display">${time}<span class="tz-abbr">${abbr}</span></span>`;
+
+                        if (isWorkingHours(hourDate, tzObj.timezone)) {
+                            td.classList.add('working-hours');
+                        }
+
+                        row.appendChild(td);
+                    });
+
+                    tbody.appendChild(row);
+                }
+
+                table.appendChild(tbody);
+                tableWrapper.appendChild(table);
+                details.appendChild(tableWrapper);
+                container.appendChild(details);
+            }
+        }
+
+        renderTable();
+    </script>
+</body>
+
+</html>
