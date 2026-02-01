@@ -45,6 +45,35 @@ function getTimezones() {
 }
 
 function getTimezoneAbbr(date, timezone) {
+    // check if DST is active for a given date/timezone
+    function isDST(date, timezone) {
+        const jan = new Date(date.getFullYear(), 0, 1);
+        const jul = new Date(date.getFullYear(), 6, 1);
+        const janOffset = new Date(jan.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset();
+        const julOffset = new Date(jul.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset();
+        const currentOffset = new Date(date.toLocaleString('en-US', { timeZone: timezone })).getTimezoneOffset();
+        const stdOffset = Math.max(janOffset, julOffset);
+        return currentOffset < stdOffset;
+    }
+
+    // manual mapping only for timezones not well-handled by JS Intl API
+    // (mostly Asian and Eastern European timezones that return generic GMT offsets)
+    const timezoneAbbrMap = {
+        'Asia/Singapore': 'SGT',
+        'Asia/Tokyo': 'JST',
+        'Asia/Hong_Kong': 'HKT',
+        'Asia/Dubai': 'GST',
+        'Pacific/Auckland': isDST(date, timezone) ? 'NZDT' : 'NZST',
+        'Australia/Sydney': isDST(date, timezone) ? 'AEDT' : 'AEST',
+        'Europe/Kyiv': isDST(date, timezone) ? 'EEST' : 'EET',
+        'Europe/Istanbul': 'TRT'
+    };
+
+    if (timezoneAbbrMap[timezone]) {
+        return timezoneAbbrMap[timezone];
+    }
+
+    // fall back to JS' Intl API
     const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: timezone,
         timeZoneName: 'short'
@@ -52,7 +81,34 @@ function getTimezoneAbbr(date, timezone) {
 
     const parts = formatter.formatToParts(date);
     const tzPart = parts.find(part => part.type === 'timeZoneName');
-    return tzPart ? tzPart.value : '';
+    const abbr = tzPart ? tzPart.value : '';
+    
+    if (abbr.startsWith('GMT')) {
+        return '';
+    }
+    
+    return abbr;
+}
+
+function getTimezoneOffset(date, timezone) {
+    // get the UTC offset in minutes
+    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const tzDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
+    const offsetMinutes = (tzDate - utcDate) / (1000 * 60);
+    const offsetHours = offsetMinutes / 60;
+    
+    // format as UTC+X or UTC-X
+    if (offsetHours === 0) {
+        return 'UTC';
+    }
+    const sign = offsetHours > 0 ? '+' : '';
+    
+    // check if we have fractional hours (like +5.5)
+    if (offsetHours % 1 !== 0) {
+        return `UTC${sign}${offsetHours.toFixed(1)}`;
+    }
+    
+    return `UTC${sign}${Math.floor(offsetHours)}`;
 }
 
 function formatTime(date, timezone) {
@@ -64,9 +120,9 @@ function formatTime(date, timezone) {
     });
 
     const time = timeFormatter.format(date);
-    const abbr = getTimezoneAbbr(date, timezone);
+    const offset = getTimezoneOffset(date, timezone);
 
-    return { time, abbr };
+    return { time, offset };
 }
 
 function getHourInTimezone(date, timezone) {
@@ -149,9 +205,16 @@ function renderTable() {
                 th.textContent = tzObj.customLabel;
             } else {
                 const sampleDate = new Date();
+                const offset = getTimezoneOffset(sampleDate, tzObj.timezone);
                 const abbr = getTimezoneAbbr(sampleDate, tzObj.timezone);
                 const location = tzObj.customLabel || getFriendlyLocation(tzObj.timezone);
-                th.textContent = `${abbr} (${location})`;
+                
+                // show abbreviation if available
+                if (abbr) {
+                    th.textContent = `${offset} (${location}, ${abbr})`;
+                } else {
+                    th.textContent = `${offset} (${location})`;
+                }
             }
 
             headerRow.appendChild(th);
@@ -173,14 +236,10 @@ function renderTable() {
 
             timezones.forEach(tzObj => {
                 const td = document.createElement('td');
-                const { time, abbr } = formatTime(hourDate, tzObj.timezone);
+                const { time, offset } = formatTime(hourDate, tzObj.timezone);
 
-                // for pure offsets, don't show abbreviation (header already shows UTC+X)
-                if (tzObj.isPureOffset) {
-                    td.innerHTML = `${time}`;
-                } else {
-                    td.innerHTML = `${time}<span class="tz-abbr">${abbr}</span>`;
-                }
+                // always show the UTC offset
+                td.innerHTML = `${time}<span class="tz-abbr">${offset}</span>`;
 
                 if (isWorkingHours(hourDate, tzObj.timezone)) {
                     td.classList.add('working-hours');
