@@ -177,9 +177,9 @@ function renderTable() {
 
                 // for pure offsets, don't show abbreviation (header already shows UTC+X)
                 if (tzObj.isPureOffset) {
-                    td.innerHTML = `<span class="time-display">${time}</span>`;
+                    td.innerHTML = `${time}`;
                 } else {
-                    td.innerHTML = `<span class="time-display">${time}<span class="tz-abbr">${abbr}</span></span>`;
+                    td.innerHTML = `${time}<span class="tz-abbr">${abbr}</span>`;
                 }
 
                 if (isWorkingHours(hourDate, tzObj.timezone)) {
