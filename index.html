@@ -18,34 +18,41 @@
         <details class="info-section">
             <summary>How to customise displayed timezones</summary>
             <div class="info-box">
-                <p>The intention is that you customise the timezones to suit your needs and then save the corresponding URL as a bookmark or similar.</p>
-                <p><strong>Customise timezones:</strong> Add <code>?tz=</code> to the URL with comma-separated timezone names or UTC offsets.</p>
-                <p><strong>UTC offsets:</strong> Use numeric offsets like <code>0</code>, <code>+4</code>, <code>-5</code>, <code>-8</code> to display fixed UTC offsets (eg. UTC+4, UTC-5).</p>
-                <p><strong>Custom labels:</strong> Add <code>:CustomName</code> after any timezone to override the default location name.</p>
+                <p>The intention is that you customise the timezones to suit your needs and then save the corresponding URL / set it as a bookmark:</p>
+                <ul>
+                    <li><strong>Set timezones to display:</strong> Add <code>?tz=</code> to the URL with comma-separated timezone names or UTC offsets</li>
+                    <ul>
+                        <li><strong>Named timezones:</strong> Use IANA timezone names like <code>Europe/London</code>, <code>America/New_York</code>, <code>Asia/Tokyo</code></li>
+                        <li><strong>UTC offsets:</strong> Use numeric offsets like <code>0</code>, <code>+4</code>, <code>-5</code>, <code>-8</code> to display fixed UTC offsets (eg. UTC+4, UTC-5)</li>
+                    </ul>
+                    <li><strong>Custom labels:</strong> Add <code>:CustomName</code> after any timezone to override the default location name</li>
+                </ul>
+                <hr />
                 <p><strong>Examples:</strong></p>
                 <ul>
-                    <li><code>?tz=Europe/London,America/New_York,America/Los_Angeles</code></li>
-                    <li><code>?tz=Europe/London,America/Chicago,America/Los_Angeles:San Francisco</code></li>
-                    <li><code>?tz=Europe/London:UK,America/New_York:NYC,America/Los_Angeles:SF</code></li>
-                    <li><code>?tz=0,+4,-5,-8</code> (displays as UTC+0, UTC+4, UTC-5, UTC-8)</li>
-                    <li><code>?tz=Europe/London,+4:Dubai,-8:Pacific</code> (mix named timezones and offsets)</li>
+                    <li><a href="?tz=Europe/London,America/New_York,America/Los_Angeles"><code>?tz=Europe/London,America/New_York,America/Los_Angeles</code></a></li>
+                    <li><a href="?tz=Europe/London,America/Chicago,America/Los_Angeles:San Francisco"><code>?tz=Europe/London,America/Chicago,America/Los_Angeles:San Francisco</code></a></li>
+                    <li><a href="?tz=Europe/London:UK,America/New_York:NYC,America/Los_Angeles:SF"><code>?tz=Europe/London:UK,America/New_York:NYC,America/Los_Angeles:SF</code></a></li>
+                    <li><a href="?tz=0,+4,-5,-8"><code>?tz=0,+4,-5,-8</code></a> (displays as UTC+0, UTC+4, UTC-5, UTC-8)</li>
+                    <li><a href="?tz=Europe/London,+4:Dubai,-8:Pacific"><code>?tz=Europe/London,+4:Dubai,-8:Pacific</code></a> (mix named timezones and offsets)</li>
                 </ul>
-                <p><strong>Common timezones:</strong></p>
+                <hr />
+                <p><strong>Common timezones:</strong> (<a href="https://nodatime.org/TimeZones">all IANA timezones</a>)</p>
                 <ul class="two-columns">
-                    <li>Pacific/Auckland (NZDT, UTC+13)</li>
-                    <li>Australia/Sydney (AEDT, UTC+11)</li>
-                    <li>Asia/Tokyo (JST, UTC+9)</li>
-                    <li>Asia/Hong_Kong (HKT, UTC+8)</li>
-                    <li>Asia/Singapore (SGT, UTC+8)</li>
-                    <li>Asia/Dubai (GST, UTC+4)</li>
-                    <li>Europe/Paris (CET, UTC+1)</li>
-                    <li>Europe/London (GMT, UTC+0)</li>
-                    <li>America/New_York (EST, UTC-5)</li>
-                    <li>America/Chicago (CST, UTC-6)</li>
-                    <li>America/Denver (MST, UTC-7)</li>
-                    <li>America/Phoenix (MST, UTC-7)</li>
-                    <li>America/Los_Angeles (PST, UTC-8)</li>
-                    <li>America/Anchorage (AKST, UTC-9)</li>
+                    <li>Pacific/Auckland (NZDT, UTC+13) <a class="add-to-url" href="?tz=Pacific/Auckland">Add to URL</a></li>
+                    <li>Australia/Sydney (AEDT, UTC+11) <a class="add-to-url" href="?tz=Australia/Sydney">Add to URL</a></li>
+                    <li>Asia/Tokyo (JST, UTC+9) <a class="add-to-url" href="?tz=Asia/Tokyo">Add to URL</a></li>
+                    <li>Asia/Hong_Kong (HKT, UTC+8) <a class="add-to-url" href="?tz=Asia/Hong_Kong">Add to URL</a></li>
+                    <li>Asia/Singapore (SGT, UTC+8) <a class="add-to-url" href="?tz=Asia/Singapore">Add to URL</a></li>
+                    <li>Asia/Dubai (GST, UTC+4) <a class="add-to-url" href="?tz=Asia/Dubai">Add to URL</a></li>
+                    <li>Europe/Kyiv (CET, UTC+2) <a class="add-to-url" href="?tz=Europe/Kyiv">Add to URL</a></li>
+                    <li>Europe/Paris (CET, UTC+1) <a class="add-to-url" href="?tz=Europe/Paris">Add to URL</a></li>
+                    <li>Europe/London (GMT, UTC+0) <a class="add-to-url" href="?tz=Europe/London">Add to URL</a></li>
+                    <li>America/New_York (EST, UTC-5) <a class="add-to-url" href="?tz=America/New_York">Add to URL</a></li>
+                    <li>America/Chicago (CST, UTC-6) <a class="add-to-url" href="?tz=America/Chicago">Add to URL</a></li>
+                    <li>America/Denver (MST, UTC-7) <a class="add-to-url" href="?tz=America/Denver">Add to URL</a></li>
+                    <li>America/Los_Angeles (PST, UTC-8) <a class="add-to-url" href="?tz=America/Los_Angeles">Add to URL</a></li>
+                    <li>America/Anchorage (AKST, UTC-9) <a class="add-to-url" href="?tz=America/Anchorage">Add to URL</a></li>
                 </ul>
             </div>
         </details>

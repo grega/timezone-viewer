@@ -170,6 +170,12 @@ h1 {
   margin-bottom: 0;
 }
 
+.info-box hr {
+  border: none;
+  border-top: 1px solid #dee2e6;
+  margin: 1.2rem 0 1rem 0;
+}
+
 .info-box ul {
   margin: 0.5rem 0 0 1.5rem;
 }
@@ -177,6 +183,40 @@ h1 {
 .info-box ul.two-columns {
   columns: 2;
   column-gap: 1rem;
+}
+
+.info-box li {
+  margin-bottom: 0.5rem;
+}
+
+.info-section a {
+  color: #d63384;
+  text-decoration: underline;
+}
+
+.info-section a:hover, .info-section a:focus, .info-section a:active {
+  color: #d63384;
+  text-decoration: underline;
+}
+
+.info-section a.add-to-url {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  background: #e9ecef;
+  color: #495057;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.info-section a.add-to-url:hover,
+.info-section a.add-to-url:focus {
+  background: #dee2e6;
+  color: #343a40;
+  text-decoration: none;
 }
 
 .day-section table {
