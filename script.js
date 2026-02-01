@@ -200,3 +200,25 @@ function renderTable() {
 }
 
 renderTable();
+
+// handle "Add to URL" links to append to existing ?tz= parameter
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-to-url')) {
+        e.preventDefault();
+        
+        try {
+            const href = e.target.getAttribute('href');
+            const newTz = new URLSearchParams(href).get('tz');
+            
+            const params = new URLSearchParams(window.location.search);
+            const currentTz = params.get('tz');
+            
+            const tzValue = currentTz ? currentTz + ',' + newTz : newTz;
+            
+            window.history.replaceState({}, '', '?tz=' + tzValue);
+            renderTable();
+        } catch (err) {
+            console.error('Error handling add-to-url click:', err);
+        }
+    }
+});
