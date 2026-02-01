@@ -140,9 +140,6 @@ function renderTable() {
 
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
-        const timeHeader = document.createElement('th');
-        timeHeader.textContent = 'Time (local)';
-        headerRow.appendChild(timeHeader);
 
         timezones.forEach(tzObj => {
             const th = document.createElement('th');
@@ -173,10 +170,6 @@ function renderTable() {
             hourDate.setHours(hour);
 
             const row = document.createElement('tr');
-
-            const hourCell = document.createElement('td');
-            hourCell.textContent = String(hour).padStart(2, '0') + ':00';
-            row.appendChild(hourCell);
 
             timezones.forEach(tzObj => {
                 const td = document.createElement('td');
