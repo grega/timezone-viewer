@@ -40,3 +40,9 @@ Assuming no DST adjustments:
 - America/Phoenix (MST, UTC-7)
 - America/Los_Angeles (PST, UTC-8)
 - America/Anchorage (AKST, UTC-9)
+
+## Deploy
+
+```
+git push dokku main
+```
